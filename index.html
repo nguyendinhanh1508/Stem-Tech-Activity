@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dryanh CTF</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #080b0f;
+            color: #d6f7df;
+            font-family: "Courier New", monospace;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+
+        nav {
+            height: 65px;
+            background: #0d1218;
+            border-bottom: 1px solid #1d3d2b;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 8%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: #00ff66;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logo::before {
+            content: "> ";
+        }
+
+        nav a {
+            color: #8aa996;
+            text-decoration: none;
+            margin-left: 25px;
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: #00ff66;
+        }
+
+        /* HERO */
+
+        .hero {
+            min-height: 470px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+            padding: 50px 20px;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #10261a 0%,
+                    #080b0f 60%
+                );
+        }
+
+        .terminal {
+            color: #00ff66;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(45px, 8vw, 90px);
+            color: #00ff66;
+            text-shadow: 0 0 20px #00ff6680;
+        }
+
+        .hero h2 {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #789484;
+            font-weight: normal;
+        }
+
+        .hero p {
+            max-width: 600px;
+            margin-top: 25px;
+            line-height: 1.7;
+            color: #9ab5a3;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 13px 25px;
+
+            border: 1px solid #00ff66;
+            color: #00ff66;
+            text-decoration: none;
+
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: #00ff66;
+            color: #080b0f;
+            box-shadow: 0 0 20px #00ff6666;
+        }
+
+        /* MAIN */
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 70px 20px;
+        }
+
+        .section-title {
+            color: #00ff66;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .section-title::before {
+            content: "./";
+            color: #477d5b;
+        }
+
+        .section-description {
+            color: #708b7a;
+            margin-bottom: 35px;
+        }
+
+        /* SCORE */
+
+        .score-box {
+            background: #0d1218;
+            border: 1px solid #1d3d2b;
+
+            padding: 20px;
+            margin-bottom: 35px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .score {
+            font-size: 22px;
+            color: #00ff66;
+        }
+
+        .reset {
+            background: transparent;
+            border: 1px solid #522;
+            color: #f66;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .reset:hover {
+            background: #301010;
+        }
+
+        /* CHALLENGES */
+
+        .challenges {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .challenge {
+            background: #0d1218;
+            border: 1px solid #1b3024;
+
+            padding: 25px;
+
+            transition: 0.2s;
+        }
+
+        .challenge:hover {
+            border-color: #00ff66;
+            transform: translateY(-3px);
+        }
+
+        .challenge.solved {
+            border-color: #00ff66;
+            background: #0d1911;
+        }
+
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .challenge-number {
+            color: #477d5b;
+            font-size: 13px;
+        }
+
+        .points {
+            color: #00ff66;
+            font-size: 13px;
+        }
+
+        .challenge h3 {
+            margin-top: 18px;
+            margin-bottom: 10px;
+            color: #e4ffe9;
+        }
+
+        .category {
+            display: inline-block;
+            font-size: 12px;
+            color: #80a98c;
+            border: 1px solid #294734;
+            padding: 4px 8px;
+            margin-bottom: 15px;
+        }
+
+        .challenge p {
+            color: #789484;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .challenge input {
+            width: 100%;
+            margin-top: 18px;
+
+            background: #070a0d;
+            border: 1px solid #294734;
+
+            padding: 12px;
+
+            color: #00ff66;
+            font-family: inherit;
+
+            outline: none;
+        }
+
+        .challenge input:focus {
+            border-color: #00ff66;
+        }
+
+        .submit {
+            width: 100%;
+            margin-top: 10px;
+
+            padding: 11px;
+
+            background: #102018;
+            border: 1px solid #315f40;
+
+            color: #00ff66;
+            font-family: inherit;
+
+            cursor: pointer;
+        }
+
+        .submit:hover {
+            background: #163622;
+        }
+
+        .feedback {
+            margin-top: 12px;
+            min-height: 18px;
+            font-size: 13px;
+        }
+
+        .correct {
+            color: #00ff66;
+        }
+
+        .wrong {
+            color: #ff6666;
+        }
+
+        /* ABOUT */
+
+        .about {
+            margin-top: 100px;
+
+            background: #0d1218;
+            border: 1px solid #1d3d2b;
+
+            padding: 30px;
+
+            line-height: 1.8;
+            color: #829b8b;
+        }
+
+        .about strong {
+            color: #00ff66;
+        }
+
+        /* FOOTER */
+
+        footer {
+            border-top: 1px solid #17261c;
+            text-align: center;
+
+            padding: 30px;
+
+            color: #476152;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 0 20px;
+            }
+
+            nav a {
+                margin-left: 10px;
+                font-size: 13px;
+            }
+
+            .hero {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">ByteBreak CTF</div>
+
+    <div>
+        <a href="#challenges">Challenges</a>
+        <a href="#about">About</a>
+    </div>
+</nav>
+
+
+<section class="hero">
+
+    <div class="terminal">
+        $ ./start_ctf.sh
+    </div>
+
+    <h1>DRYANH Ctf</h1>
+
+    <h2>Stem Activity</h2>
+
+    <p>
+        Welcome, hacker. Explore the challenges, find the hidden flags,
+        and prove that you can break your way through the system.
+    </p>
+
+    <a class="button" href="#challenges">
+        START CTF
+    </a>
+
+</section>
+
+
+<main id="challenges">
+
+    <h2 class="section-title">challenges</h2>
+
+    <p class="section-description">
+        Find the flags. Submit them below. Have fun.
+        <br>Once you have 600 points, come back to Elementz Lab.
+    </p>
+
+
+    <div class="score-box">
+
+        <div>
+            Score:
+            <span class="score">
+                <span id="score">0</span> / 600
+            </span>
+        </div>
+
+        <button class="reset" onclick="resetProgress()">
+            reset progress
+        </button>
+
+    </div>
+
+
+    <div class="challenges">
+
+
+        <!-- CHALLENGE 1 -->
+
+        <div class="challenge" id="challenge-1">
+
+            <div class="challenge-header">
+                <span class="challenge-number">01</span>
+                <span class="points">100 pts</span>
+            </div>
+
+            <span class="category">OSINT</span>
+
+            <h3>Look Closer</h3>
+
+            <p>
+                Sometimes the answer is right in front of you.
+                Inspect the source code of this webpage.
+            </p>
+
+            <input
+                id="flag-1"
+                placeholder="CTF{...}"
+            >
+
+            <button
+                class="submit"
+                onclick="submitFlag(1)"
+            >
+                Submit Flag
+            </button>
+
+            <div class="feedback" id="feedback-1"></div>
+
+        </div>
+
+
+        <!-- CHALLENGE 2 -->
+
+        <div class="challenge" id="challenge-2">
+
+            <div class="challenge-header">
+                <span class="challenge-number">02</span>
+                <span class="points">100 pts</span>
+            </div>
+
+            <span class="category">ENCODING</span>
+
+            <h3>Base Camp</h3>
+
+            <p>
+                Decode this Base64 string:
+                <br><br>
+                <code>Q1RGe2Jhc2U2NF9pc19lYXN5fQ==</code>
+            </p>
+
+            <input
+                id="flag-2"
+                placeholder="CTF{...}"
+            >
+
+            <button
+                class="submit"
+                onclick="submitFlag(2)"
+            >
+                Submit Flag
+            </button>
+
+            <div class="feedback" id="feedback-2"></div>
+
+        </div>
+
+
+        <!-- CHALLENGE 3 -->
+
+        <div class="challenge" id="challenge-3">
+
+            <div class="challenge-header">
+                <span class="challenge-number">03</span>
+                <span class="points">100 pts</span>
+            </div>
+
+            <span class="category">CRYPTO</span>
+
+            <h3>Caesar Salad</h3>
+
+            <p>
+                Julius Caesar would be proud.
+                Decode:
+                <br><br>
+                <code>FWJ{fdhvdu_lv_hdvb}</code>
+                <br><br>
+                Hint: ROT-3
+            </p>
+
+            <input
+                id="flag-3"
+                placeholder="CTF{...}"
+            >
+
+            <button
+                class="submit"
+                onclick="submitFlag(3)"
+            >
+                Submit Flag
+            </button>
+
+            <div class="feedback" id="feedback-3"></div>
+
+        </div>
+
+
+        <!-- CHALLENGE 4 -->
+
+        <div class="challenge" id="challenge-4">
+
+            <div class="challenge-header">
+                <span class="challenge-number">04</span>
+                <span class="points">100 pts</span>
+            </div>
+
+            <span class="category">WEB</span>
+
+            <h3>Inspect Me</h3>
+
+            <p>
+                Something is hidden inside this challenge.
+                Use your browser's developer tools and inspect
+                the HTML.
+            </p>
+
+            <input
+                id="flag-4"
+                placeholder="CTF{...}"
+            >
+
+            <button
+                class="submit"
+                onclick="submitFlag(4)"
+            >
+                Submit Flag
+            </button>
+
+            <div class="feedback" id="feedback-4"></div>
+
+        </div>
+
+
+        <!-- CHALLENGE 5 -->
+
+        <div class="challenge" id="challenge-5">
+
+            <div class="challenge-header">
+                <span class="challenge-number">05</span>
+                <span class="points">100 pts</span>
+            </div>
+
+            <span class="category">REVERSING</span>
+
+            <h3>What's the Password?</h3>
+
+            <p>
+                A suspicious JavaScript variable contains
+                something interesting.
+                Read the page source.
+            </p>
+
+            <input
+                id="flag-5"
+                placeholder="CTF{...}"
+            >
+
+            <button
+                class="submit"
+                onclick="submitFlag(5)"
+            >
+                Submit Flag
+            </button>
+
+            <div class="feedback" id="feedback-5"></div>
+
+        </div>
+
+
+        <!-- CHALLENGE 6 -->
+
+        <div class="challenge" id="challenge-6">
+
+            <div class="challenge-header">
+                <span class="challenge-number">06</span>
+                <span class="points">100 pts</span>
+            </div>
+
+            <span class="category">MISC</span>
+
+            <h3>Final Transmission</h3>
+
+            <p>
+                The final flag is protected by a very
+                sophisticated security mechanism.
+                <br><br>
+                Hint: "admin"
+            </p>
+
+            <input
+                id="flag-6"
+                placeholder="CTF{...}"
+            >
+
+            <button
+                class="submit"
+                onclick="submitFlag(6)"
+            >
+                Submit Flag
+            </button>
+
+            <div class="feedback" id="feedback-6"></div>
+
+        </div>
+
+    </div>
+
+
+    <section class="about" id="about">
+
+        <h2 class="section-title">about</h2>
+
+        <p>
+            <strong>ByteBreak CTF</strong> is a beginner-friendly
+            Capture The Flag competition designed to introduce
+            players to cybersecurity.
+        </p>
+
+        <br>
+
+        <p>
+            Categories include web exploitation, cryptography,
+            encoding, OSINT, reversing and miscellaneous challenges.
+        </p>
+
+        <br>
+
+        <p>
+            Good luck, hacker.
+        </p>
+
+    </section>
+
+</main>
+
+
+<footer>
+    ByteBreak CTF © 2026
+</footer>
+
+
+<!--
+=========================================================
+CHALLENGE 1 FLAG
+=========================================================
+
+This is intentionally hidden in the source.
+
+FLAG:
+CTF{source_code_is_your_friend}
+
+=========================================================
+-->
+
+<!--
+=========================================================
+CHALLENGE 4 FLAG
+
+You found the hidden HTML comment!
+
+FLAG:
+CTF{inspect_element}
+
+=========================================================
+-->
+
+<script>
+
+    /*
+     * Challenge 5
+     *
+     * Don't trust client-side JavaScript ;)
+     */
+
+    const secretPassword =
+        "CTF{javascript_is_not_secret}";
+
+
+    /*
+     * Challenge flags
+     *
+     * IMPORTANT:
+     *
+     * This is a STATIC website.
+     *
+     * Therefore players can inspect this JavaScript
+     * and find the flags.
+     *
+     * This is fine for a beginner CTF, but NOT secure
+     * for a serious competition.
+     */
+
+    const flags = {
+
+        1: "CTF{source_code_is_your_friend}",
+
+        2: "CTF{base64_is_easy}",
+
+        3: "CTF{caesar_is_easy}",
+
+        4: "CTF{inspect_element}",
+
+        5: "CTF{javascript_is_not_secret}",
+
+        6: "CTF{admin_is_the_password}"
+
+    };
+
+
+    const points = {
+        1: 100,
+        2: 100,
+        3: 100,
+        4: 100,
+        5: 100,
+        6: 100
+    };
+
+
+    /*
+     * Load saved progress
+     */
+
+    let solved =
+        JSON.parse(
+            localStorage.getItem("ctfSolved") || "[]"
+        );
+
+
+    function updateScore() {
+
+        let total = 0;
+
+        solved.forEach(id => {
+            total += points[id];
+        });
+
+        document.getElementById("score").textContent = total;
+
+        solved.forEach(id => {
+
+            const challenge =
+                document.getElementById(
+                    "challenge-" + id
+                );
+
+            if (challenge) {
+                challenge.classList.add("solved");
+            }
+
+        });
+    }
+
+
+    function submitFlag(id) {
+
+        const input =
+            document.getElementById("flag-" + id);
+
+        const feedback =
+            document.getElementById("feedback-" + id);
+
+        const answer =
+            input.value.trim();
+
+
+        if (solved.includes(id)) {
+
+            feedback.textContent =
+                "✓ Already solved.";
+
+            feedback.className =
+                "feedback correct";
+
+            return;
+        }
+
+
+        if (answer === flags[id]) {
+
+            feedback.textContent =
+                "✓ Correct! Challenge solved.";
+
+            feedback.className =
+                "feedback correct";
+
+
+            solved.push(id);
+
+            localStorage.setItem(
+                "ctfSolved",
+                JSON.stringify(solved)
+            );
+
+            updateScore();
+
+        } else {
+
+            feedback.textContent =
+                "✗ Incorrect flag.";
+
+            feedback.className =
+                "feedback wrong";
+
+        }
+
+    }
+
+
+    function resetProgress() {
+
+        if (
+            confirm(
+                "Are you sure you want to reset your progress?"
+            )
+        ) {
+
+            localStorage.removeItem("ctfSolved");
+
+            solved = [];
+
+            location.reload();
+
+        }
+
+    }
+
+
+    /*
+     * Allow pressing Enter to submit
+     */
+
+    document.querySelectorAll("input").forEach(input => {
+
+        input.addEventListener("keydown", function(event) {
+
+            if (event.key === "Enter") {
+
+                const id =
+                    this.id.split("-")[1];
+
+                submitFlag(Number(id));
+
+            }
+
+        });
+
+    });
+
+
+    updateScore();
+
+</script>
+
+</body>
+</html>
